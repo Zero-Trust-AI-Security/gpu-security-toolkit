@@ -1,0 +1,65 @@
+name: Build mdBook (HTML + PDF)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install mdBook
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v2
+        with:
+          mdbook-version: 'latest'   # or pin a specific version
+      # Install Rust so we can cargo-install plugins
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      # Install Pandoc
+      - name: Setup Pandoc
+        uses: pandoc/actions/setup@v1
+
+      # Install LaTeX engine (Tectonic) for Pandoc→PDF
+      - name: Setup Tectonic
+        uses: wtfjoke/setup-tectonic@v3
+
+      # Install mdbook-pandoc plugin
+      - name: Install mdbook-pandoc
+        run: cargo install mdbook-pandoc --locked
+
+      # Build HTML (standard mdBook)
+      - name: Build HTML
+        run: mdbook build
+
+      # Build PDF via the pandoc profile defined in book.toml
+      - name: Build PDF
+        run: |
+          # Ensure the pandoc backend is picked up (it's configured in book.toml)
+          mdbook build
+          # The PDF will be at book/pandoc/pdf/GPU-Security-Toolkit.pdf
+          ls -lah book || true
+          ls -lah book/pandoc/pdf || true
+
+      # Upload the PDF as a workflow artifact
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-pdf
+          path: book/pandoc/pdf/GPU-Security-Toolkit.pdf
+          if-no-files-found: error
+
+      # # Deploy to GitHub Pages example
+      # - name: Deploy to GitHub Pages
+      #   if: github.ref == 'refs/heads/main'
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./book
+      #     cname: gpu-security.your-domain.com  # Optional: your custom domain

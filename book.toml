@@ -1,0 +1,37 @@
+[book]
+title = "Enterprise GPU Security Toolkit"
+authors = ["joey-huckabee"]
+language = "en"
+multilingual = false
+src = "src"
+description = "Complete security framework for enterprise NVIDIA GPU infrastructure including NIST 800-53 controls, incident response playbooks, and forensic procedures"
+
+[preprocessor.links]
+
+[output.html]
+default-theme = "navy"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/Zero-Trust-AI-Security/gpu-security-toolkit"
+edit-url-template = "https://github.com/Zero-Trust-AI-Security/gpu-security-toolkit/edit/main/{path}"
+site-url = "/gpu-security-toolkit/"
+cname = "gpu-security.example.com"
+additional-css = ["theme/custom.css"]
+additional-js = ["theme/custom.js"]
+
+[output.html.fold]
+enable = true
+level = 1
+
+[output.html.search]
+enable = true
+limit-results = 30
+use-boolean-and = true
+
+[output.html.print]
+enable = true
+
+[output.html.playground]
+editable = false
+copyable = true
+copy-js = true
+line-numbers = true
